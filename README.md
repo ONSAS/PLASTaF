@@ -1,2 +1,2 @@
 # PLASTaF
-PLastic Analysis of Sections, Trusses and Frames
+## PLastic Analysis of Sections, Trusses and Frames
