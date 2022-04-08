@@ -6,6 +6,8 @@
 % ------------------------------
 generalDefs
 
+% Solver
+% ------------------------------
 
 while (nTimes > time)
 	
@@ -28,7 +30,7 @@ while (nTimes > time)
 	
 	% Finds Uk
 	k = 0 ; % NR iter counter
-	convIter = 0 ;
+	convIter = 0 ; % Convergence control parameter
 	
 	while convIter == 0
 	
@@ -44,10 +46,11 @@ while (nTimes > time)
 	matFint = [ matFint Fintk ] ;
 	matFintL = [ matFintL FintkL ] ;
 	convParam = [ convParam ; cond ] ;
-	
 	KTstore{time+1} = KTkred ;
 	
+	% Updates time
 	time = time+1 ;
 	
 end
+
 

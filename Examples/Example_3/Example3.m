@@ -6,11 +6,16 @@ clear all, close all, clc
 
 % Definitions
 
+% Problem name
+% ------------------------------
+problemName = 'Example3_Jirasek_' ;
+
+
 % Solver path
 % ------------------------------
 
 curr_path = pwd ;
-solver_path = '../truss/' ;
+solver_path = '../../src/truss/' ;
 
 % Material parameters
 % ------------------------------
@@ -80,6 +85,18 @@ epsPl0 	= 0 ;
 epsPla0 = 0 ;
 sigma0 = 0 ;
 
+% Plot parameters
+% ------------------------------
+% Figure names
+nameUndeformed = [ problemName 'Undeformed' ] ;
+nameSigEps = [ problemName 'Stress-Strain' ] ;
+nameDeformed = [ problemName 'Deformed' ] ;
+
+% Deformed structure
+plotsVec = [ 171 226 267 ] ;
+
+
+
 % FEM
 % ------------------------------
 
@@ -89,20 +106,27 @@ solverFEM
 
 cd (curr_path) 
 
-% Solution check
+% Plots
 % ------------------------------
 
-lw = 2.0 ; ms = 11 ; plotFontSize = 22 ;
+elem 				= 2 ;
+plotLoadVec = [1:nLoadSteps] ;
+scaleFactor = 1 ;
 
-figure
-grid on, hold on
-plot(cell2mat(epsHistElem(2,1:nLoadSteps)), cell2mat(sigmaHistElem(2,1:nLoadSteps)), 'b-o', 'linewidth', lw, 'markersize', ms)
+cd (solver_path)
 
-labx = xlabel('Strain'); laby = ylabel('Stress') ;
-set(labx, 'fontsize', plotFontSize);
-set(laby, 'fontsize', plotFontSize);
-tit = title('\sigma-\epsilon');
-set(tit, 'fontsize', plotFontSize);
+plots
+
+cd (curr_path) 
+
+% Print figure
+print( unDef	, [ nameUndeformed ] ,'-dpng') ;
+print( sig_eps	, [ nameSigEps ] ,'-dpng') ;
+
+
+
+% Solution check
+% ------------------------------
 
 % Analytical solution
 
