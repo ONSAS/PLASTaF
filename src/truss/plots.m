@@ -63,7 +63,7 @@ set(tit, 'fontsize', plotFontSize);
 elemDispsMat = zeros(nelems, dof*2) ;
 
 for i = 1:length(plotsVec)
-	
+	% Deformed structure
 	def = figure ;
 	
 	hold on, grid on, axis equal
@@ -100,6 +100,41 @@ for i = 1:length(plotsVec)
 		print( def	, [ nameDeformed sprintf('%02i', plotsVec(i)) ] ,'-dpng') ;
 		cd(solver_path)
 	end
+	
+	% Plastic strain
+	epsPlaHist = figure ;
+	hold on, grid on, axis equal
+	
+	% Axis
+	quiver3( xAxis, yAxis, zAxis, fac, 	 0, 	0, 0, 'm',"filled", 'linewidth', 2) ;
+	quiver3( xAxis, yAxis, zAxis, 0	 , fac, 	0, 0, 'm',"filled", 'linewidth', 2) ;
+	quiver3( xAxis, yAxis, zAxis, 0	 , 	 0, 	0, 0, 'm',"filled", 'linewidth', 2) ;
+	
+	% Colormap
+	cmap = flipud( colormap('hot') ) ;
+	colormap(cmap) ;
+
+	for j=1:nelems
+		%~ enods = Conec(i,1:2);
+		plot( elemCoordsMat(j,[1 2+1]), elemCoordsMat(j,[2 2+2]) ,['b--o'],'linewidth',lw1 )
+		if cell2mat( epsPlaHistElem(j,plotsVec(i)) ) > 1e-3*max( cell2mat(epsPlaHistElem(:,(end-1))) ) ,
+			cmapi = cmap( max( [1 round( cell2mat( epsPlaHistElem(j,plotsVec(i)) ) / max( cell2mat(epsPlaHistElem(:,(end-1))) ) * length(cmap) ) ] ),: );
+			plot( elemCoordsMatDef(j,[1 2+1]), elemCoordsMatDef(j,[2 2+2]),'color',cmapi,'linewidth',lw1 )
+		else
+			plot( elemCoordsMatDef(j,[1 2+1]), elemCoordsMatDef(j,[2 2+2]), 'g-', 'linewidth', lw, 'markersize',1.2*ms) ;
+		end
+		cd(curr_path)
+		print( def	, [ nameEpsPlaHist sprintf('%02i', plotsVec(i)) ] ,'-dpng') ;
+		cd(solver_path)
+	end
+	colorbar('title','\epsilon_{p,a}')
+	
+	labx = xlabel('X'); laby = ylabel('Y') ;
+	tit = title(['Acumulated \epsilon_p t=' sprintf('%02i', plotsVec(i)) ]) ;
+	set(labx, 'fontsize', plotFontSize*.8);
+	set(laby, 'fontsize', plotFontSize*.8);
+	set(tit, 'fontsize', plotFontSize);
+	
 end
 
 
