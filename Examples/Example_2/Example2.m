@@ -91,6 +91,7 @@ sigma0 = 0 ;
 nameUndeformed = [ problemName 'Undeformed' ] ;
 nameSigEps = [ problemName 'Stress-Strain' ] ;
 nameDeformed = [ problemName 'Deformed' ] ;
+nameEpsPlaHist = [ problemName 'epsPlaHist' ] ;
 
 % Deformed structure
 plotsVec = [ 11 21 ] ;
