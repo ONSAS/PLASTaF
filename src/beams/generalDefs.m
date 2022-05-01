@@ -56,10 +56,14 @@ free_gdl(fixed_gdl) = [] ;
 
 epsHistElem = cell(nelems,nTimes) ;
 kappaHistElem = cell(nelems,nTimes) ;
+kappaPlHistElem = cell(nelems,nTimes) ;
+kappaPlaHistElem = cell(nelems,nTimes) ;
 
 
 epsHistElem(:,1) = 0 ;
 kappaHistElem(:,1) = 0 ;
+kappaPlHistElem(:,1) = 0 ;
+kappaPlaHistElem(:,1) = 0 ;
 
 % KTred cell
 % ---------------------------------------

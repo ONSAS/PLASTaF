@@ -36,73 +36,73 @@ for i=1:nelems
 end
 
 
-unDef = figure ;
-hold on, grid on, axis equal
+%~ unDef = figure ;
+%~ hold on, grid on, axis equal
 
 % Axis
-quiver3( xAxis, yAxis, zAxis, fac, 	 0, 	0, 0, 'm',"filled", 'linewidth', 2) ;
-quiver3( xAxis, yAxis, zAxis, 0	 , fac, 	0, 0, 'm',"filled", 'linewidth', 2) ;
-quiver3( xAxis, yAxis, zAxis, 0	 , 	 0, 	0, 0, 'm',"filled", 'linewidth', 2) ;
+%~ quiver3( xAxis, yAxis, zAxis, fac, 	 0, 	0, 0, 'm',"filled", 'linewidth', 2) ;
+%~ quiver3( xAxis, yAxis, zAxis, 0	 , fac, 	0, 0, 'm',"filled", 'linewidth', 2) ;
+%~ quiver3( xAxis, yAxis, zAxis, 0	 , 	 0, 	0, 0, 'm',"filled", 'linewidth', 2) ;
 
 % Plot undeformed structure
-for j=1:nelems
-	%~ plot( elemCoordsMat(j,[1 6+1]), elemCoordsMat(j,[3 3+6]), elemCoordsMat(j,[5 5+6]), 'b--o', 'linewidth', lw, 'markersize',5*ms) ;
-	plot( elemCoordsMat(j,[1 2+1]), elemCoordsMat(j,[2 2+2]), 'b--o', 'linewidth', lw, 'markersize',ms) ; 
-end
+%~ for j=1:nelems
+	%~ %plot( elemCoordsMat(j,[1 6+1]), elemCoordsMat(j,[3 3+6]), elemCoordsMat(j,[5 5+6]), 'b--o', 'linewidth', lw, 'markersize',5*ms) ;
+	%~ plot( elemCoordsMat(j,[1 2+1]), elemCoordsMat(j,[2 2+2]), 'b--o', 'linewidth', lw, 'markersize',ms) ; 
+%~ end
 
-% Labels
-tit = title(['Undeformed Structure']) ;
-labx = xlabel('X'); laby = ylabel('Y') ;
-set(labx, 'fontsize', plotFontSize*.8);
-set(laby, 'fontsize', plotFontSize*.8);
-set(tit, 'fontsize', plotFontSize);
+%~ % Labels
+%~ tit = title(['Undeformed Structure']) ;
+%~ labx = xlabel('X'); laby = ylabel('Y') ;
+%~ set(labx, 'fontsize', plotFontSize*.8);
+%~ set(laby, 'fontsize', plotFontSize*.8);
+%~ set(tit, 'fontsize', plotFontSize);
 
 
 % Deformed structure
 % ----------------------------------------------------------------------
 elemDispsMat = zeros(nelems, dof*2) ;
 
-for i = 1:length(plotsVec)
-	% Deformed structure
-	def = figure ;
+%~ for i = 1:length(plotsVec)
+	%~ % Deformed structure
+	%~ def = figure ;
 	
-	hold on, grid on, axis equal
+	%~ hold on, grid on, axis equal
 	
-	% Axis
-	quiver3( xAxis, yAxis, zAxis, fac, 	 0, 	0, 0, 'm',"filled", 'linewidth', 2) ;
-	quiver3( xAxis, yAxis, zAxis, 0	 , fac, 	0, 0, 'm',"filled", 'linewidth', 2) ;
-	quiver3( xAxis, yAxis, zAxis, 0	 , 	 0, 	0, 0, 'm',"filled", 'linewidth', 2) ;
+	%~ % Axis
+	%~ quiver3( xAxis, yAxis, zAxis, fac, 	 0, 	0, 0, 'm',"filled", 'linewidth', 2) ;
+	%~ quiver3( xAxis, yAxis, zAxis, 0	 , fac, 	0, 0, 'm',"filled", 'linewidth', 2) ;
+	%~ quiver3( xAxis, yAxis, zAxis, 0	 , 	 0, 	0, 0, 'm',"filled", 'linewidth', 2) ;
 	
-	for j=1:nelems
-		%~ plot( elemCoordsMat(j,[1 6+1]), elemCoordsMat(j,[3 3+6]), elemCoordsMat(j,[5 5+6]), 'b--o', 'linewidth', lw, 'markersize',5*ms) ;
-		plot( elemCoordsMat(j,[1 2+1]), elemCoordsMat(j,[2 2+2]), 'b--o', 'linewidth', lw, 'markersize',ms) ; 
-	end
+	%~ for j=1:nelems
+		% %~ plot( elemCoordsMat(j,[1 6+1]), elemCoordsMat(j,[3 3+6]), elemCoordsMat(j,[5 5+6]), 'b--o', 'linewidth', lw, 'markersize',5*ms) ;
+		%~ plot( elemCoordsMat(j,[1 2+1]), elemCoordsMat(j,[2 2+2]), 'b--o', 'linewidth', lw, 'markersize',ms) ; 
+	%~ end
 
-	Ut = matUk(:, plotsVec(i) ) ;
-	for j=1:nelems
-		nodesElem = Conec(j,1:2) ;
-		nod1Dofs = dof*(nodesElem(1)-1)+(1:dof) ;
-		nod2Dofs = dof*(nodesElem(2)-1)+(1:dof) ;
-		dofs = [nod1Dofs, nod2Dofs ] ;
-		elemDispsMat(j,:) = Ut(dofs)' ;
-	end
+	%~ Ut = matUk(:, plotsVec(i) ) ;
+	%~ for j=1:nelems
+		%~ nodesElem = Conec(j,1:2) ;
+		%~ nod1Dofs = dof*(nodesElem(1)-1)+(1:dof) ;
+		%~ nod2Dofs = dof*(nodesElem(2)-1)+(1:dof) ;
+		%~ dofs = [nod1Dofs, nod2Dofs ] ;
+		%~ elemDispsMat(j,:) = Ut(dofs)' ;
+	%~ end
 
-	elemCoordsMatDef = elemCoordsMat + elemDispsMat*scaleFactor ;
+	%~ elemCoordsMatDef = elemCoordsMat + elemDispsMat*scaleFactor ;
 	
-	for j=1:nelems
-		plot( elemCoordsMatDef(j,[1 2+1]), elemCoordsMatDef(j,[2 2+2]), 'g-', 'linewidth', lw, 'markersize',1.2*ms) ;
-		tit = title(['Deformed Structure t=' sprintf('%02i', plotsVec(i)) ]) ; 
-		labx = xlabel('X'); laby = ylabel('Y') ;
-		set(labx, 'fontsize', plotFontSize*.8);
-		set(laby, 'fontsize', plotFontSize*.8);
-		set(tit, 'fontsize', plotFontSize);
-		cd(curr_path)
-		print( def	, [ nameDeformed sprintf('%02i', plotsVec(i)) ] ,'-dpng') ;
-		cd(solver_path)
-	end
+	%~ for j=1:nelems
+		%~ plot( elemCoordsMatDef(j,[1 2+1]), elemCoordsMatDef(j,[2 2+2]), 'g-', 'linewidth', lw, 'markersize',1.2*ms) ;
+		%~ tit = title(['Deformed Structure t=' sprintf('%02i', plotsVec(i)) ]) ; 
+		%~ labx = xlabel('X'); laby = ylabel('Y') ;
+		%~ set(labx, 'fontsize', plotFontSize*.8);
+		%~ set(laby, 'fontsize', plotFontSize*.8);
+		%~ set(tit, 'fontsize', plotFontSize);
+		%~ cd(curr_path)
+		%~ print( def	, [ nameDeformed sprintf('%02i', plotsVec(i)) ] ,'-dpng') ;
+		%~ cd(solver_path)
+	%~ end
 	
 	
-end
+%~ end
 
 
 
@@ -111,8 +111,9 @@ end
 
 M_kappa = figure ;
 hold on, grid on
+
  
-plot(abs(cell2mat(kappaHistElem(elem,plotLoadVec))), abs(matFintL(1*dof,plotLoadVec)), 'b-o', 'linewidth', lw1, 'markersize', ms1)
+plot(abs(cell2mat(kappaHistElem(elem,plotLoadVec)))/kappa_e, abs(matFintL(1*dof,(1:(nLoadSteps-1))))/My, 'b-o', 'linewidth', lw1, 'markersize', ms1)
 
 labx = xlabel('Curvature'); laby = ylabel('M') ;
 tit = title('M-\kappa');

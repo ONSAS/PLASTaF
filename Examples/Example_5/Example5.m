@@ -33,7 +33,7 @@ h = 0.1 ;	% section height
 secVec = [ b h ] ;
 
 L = 1 ; % Length
-nnodesMesh = 5 ;
+nnodesMesh = 20 ;
 xcoords = linspace(0,L,nnodesMesh)' ;
 ycoords = zeros(length(xcoords),1) ;
  
@@ -80,8 +80,9 @@ suppMatrix = [ 1 	inf inf ] ;
 tolk = 50 	; % Number of iters
 tolu = 1e-4 ; % Tolerance of converged disps
 tolf = 1e-6 ; % Tolerance of internal forces
-nLoadSteps = 70 ; % Number of load increments
+nLoadSteps = 65 ; % Number of load increments
  
+%~ loadFactorsVec = [ ones(nLoadSteps,1) ; -.5*ones(nLoadSteps,1) ] ; 
 loadFactorsVec = [ ones(nLoadSteps,1) ] ; 
  
 % Plot parameters
@@ -105,11 +106,17 @@ solverFEM
 
 cd (curr_path) 
 
+
+
 % Plots
 % ------------------------------
 
+My = sigmaY * b*h^2/6 
+Mp = sigmaY * b*h^2/4 
+kappa_e = 2*sigmaY/(E*h) 
+
 elem 				= 1 ;
-plotLoadVec = [1:(nLoadSteps-1)] ;
+plotLoadVec = [1:(nLoadSteps)] ;
 scaleFactor = 1 ;
 
 cd (solver_path)
@@ -119,8 +126,8 @@ plots
 cd (curr_path) 
 
 % Print figure
-print( unDef	, [ nameUndeformed ] ,'-dpng') ;
-print( M_kappa	, [ nameMk ] ,'-dpng') ;
+%~ print( unDef	, [ nameUndeformed ] ,'-dpng') ;
+%~ print( M_kappa	, [ nameMk ] ,'-dpng') ;
 
 
 
@@ -149,6 +156,7 @@ Mana = P*L
 fana = P*L^3/(3*E*I)
 theta_ana = P*L^2/(2*E*I)
 disp('------------------------------------')
+
 
 
 

@@ -26,9 +26,9 @@ for i=1:nelems
 	Uke = Uk(elemdofs) ;
 	
 	% Internal force
-	[Finte, ~, Ck, ~] = beamInternLoad(Uke, Xe, R, l, b, h, modelParams) ;
+	[Finte, ~, Ck, ~, ~, ~] = beamInternLoad(Uke, Xe, R, l, b, h, modelParams, kappaPlHistElem(i,:), kappaPlaHistElem(i,:), time) ;
 	
-	FintkL(elemdofs) = Finte ;																 
+	FintkL(elemdofs) = Finte ;
 	Fintk(elemdofs) = Fintk(elemdofs) + R * FintkL(elemdofs) ;
 	
 	% Tangent Stiffness Matrix in local system
@@ -72,10 +72,12 @@ for i = 1:nelems
 	Uke = Uk(elemdofs) ;
 	
 	% Constitutive model
-	[Finte, epsk, Ck, kappak] = beamInternLoad(Uke, Xe, R, l, b, h, modelParams) ;
+	[Finte, epsk, Ck, kappak, kappaPlk, kappaPlak] = beamInternLoad(Uke, Xe, R, l, b, h, modelParams, kappaPlHistElem(i,:), kappaPlaHistElem(i,:), time) ;
 																			
 	epsHistElem(i,time) = epsk ;
 	kappaHistElem(i,time) = kappak ;
+	kappaPlHistElem(i,time) = kappaPlk ;
+	kappaPlaHistElem(i,time) = kappaPlak ;
 	
 	% Internal force
 	FintkL(elemdofs) = Finte ;
