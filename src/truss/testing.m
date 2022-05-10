@@ -17,7 +17,7 @@ clear all, close all, clc
 % ------------------------------
 
 sigmaY = 250 ; % Yield stress 
-K = 21e3 ; % Linear hardening 
+K = 1e-6 ; % Linear hardening 
 
 E = 210e3 ; % Elastic modulus 
 Et = E*K / ( E+K ) ; % Tangent modulus
@@ -50,7 +50,7 @@ Conec = [ 1 2 1 ; ...
 
 % Global coordinate system
 Fx = 0 ;
-Fy = 7.5e3 ;
+Fy = -7.5e3 ;
 
 % nodalForceMatrix structure:
 % [ node Fx Fy ]
@@ -73,9 +73,11 @@ suppMatrix = [ 1 inf 	inf ; ...
 tolk = 3 	; % Number of iters
 tolu = 1e-4 ; % Tolerance of converged disps
 tolf = 1e-6 ; % Tolerance of internal forces 
-nLoadSteps = 20 ; % Number of load increments
+nLoadSteps = 16; % Number of load increments
  
-loadFactorsVec = [ones(nLoadSteps,1) ; -ones(2.5*nLoadSteps,1) ; ones(3.5*nLoadSteps,1)] ;
+%~ loadFactorsVec = [ones(nLoadSteps,1) ; -ones(2.5*nLoadSteps,1) ; ones(3.5*nLoadSteps,1)] ;
+loadFactorsVec = [ones(nLoadSteps,1) ; -ones(nLoadSteps,1) ] ;
+%~ loadFactorsVec = [ones(nLoadSteps,1) ] ;
 
 epsPl0 	= 0 ;
 epsPla0 = 0 ;
@@ -119,8 +121,8 @@ set(tit, 'fontsize', plotFontSize);
 figure
 grid on, hold on
 plot(cell2mat(epsHistElem(1,1:nLoadSteps)), cell2mat(sigmaHistElem(1,1:nLoadSteps)), 'b-x', 'linewidth', lw, 'markersize', ms) 
-plot(cell2mat(epsHistElem(1,nLoadSteps:3.5*nLoadSteps)), cell2mat(sigmaHistElem(1,nLoadSteps:3.5*nLoadSteps)), 'g-o', 'linewidth', lw, 'markersize', ms)
-plot(cell2mat(epsHistElem(1,3.5*nLoadSteps:7*nLoadSteps)), cell2mat(sigmaHistElem(1,3.5*nLoadSteps:7*nLoadSteps)), 'b-x', 'linewidth', lw, 'markersize', ms)
+plot(cell2mat(epsHistElem(1,nLoadSteps:2*nLoadSteps)), cell2mat(sigmaHistElem(1,nLoadSteps:2*nLoadSteps)), 'g-o', 'linewidth', lw, 'markersize', ms)
+%~ plot(cell2mat(epsHistElem(1,3.5*nLoadSteps:7*nLoadSteps)), cell2mat(sigmaHistElem(1,3.5*nLoadSteps:7*nLoadSteps)), 'b-x', 'linewidth', lw, 'markersize', ms)
 
 
 labx = xlabel('Strain'); laby = ylabel('Stress') ;
@@ -128,3 +130,27 @@ set(labx, 'fontsize', plotFontSize);
 set(laby, 'fontsize', plotFontSize);
 tit = title('\sigma-\epsilon');
 set(tit, 'fontsize', plotFontSize);
+
+
+
+'-----------------------'
+epsPlElem = cell2mat(epsPlHistElem(1,:)) ;
+epsPlaElem = cell2mat(epsPlaHistElem(1,:)) ;
+epsElem = cell2mat(epsHistElem(1,:)) ;
+
+tb = 17 ; t1 = 18 ; t2 = 19
+
+[ phiHistElem(1,tb) phiHistElem(1,t1) phiHistElem(1,t2) ]
+
+vecEps = [ epsElem(17) epsElem(18) epsElem(19) ]
+vecEpsPl = [ epsPlElem(16) epsPlElem(17) epsPlElem(18) ]
+vecEpsPla = [ epsPlaElem(16) epsPlaElem(17) epsPlaElem(18) ]
+
+vecSigmaE = E*(vecEps - vecEpsPl)
+vecPhi = abs(vecSigmaE) - ( sigmaY + K * vecEpsPla )
+
+
+
+
+
+

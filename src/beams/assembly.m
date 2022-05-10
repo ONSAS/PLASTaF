@@ -72,12 +72,13 @@ for i = 1:nelems
 	Uke = Uk(elemdofs) ;
 	
 	% Constitutive model
-	[Finte, epsk, Ck, kappak, kappaPlk, kappaPlak] = beamInternLoad(Uke, Xe, R, l, b, h, modelParams, kappaPlHistElem(i,:), kappaPlaHistElem(i,:), time) ;
+	[Finte, epsk, Ck, kappak, kappaPlk, kappaPlak, phik] = beamInternLoad(Uke, Xe, R, l, b, h, modelParams, kappaPlHistElem(i,:), kappaPlaHistElem(i,:), time) ;
 																			
-	epsHistElem(i,time) = epsk ;
-	kappaHistElem(i,time) = kappak ;
-	kappaPlHistElem(i,time) = kappaPlk ;
-	kappaPlaHistElem(i,time) = kappaPlak ;
+	epsHistElem(i,time+1) = epsk ;
+	kappaHistElem(i,time+1) = kappak ;
+	kappaPlHistElem(i,time+1) = kappaPlk ;
+	kappaPlaHistElem(i,time+1) = kappaPlak ;
+	phiHistElem(i,time+1) = phik ;
 	
 	% Internal force
 	FintkL(elemdofs) = Finte ;

@@ -1,60 +1,68 @@
 % ----------------------------------------------------------------------
-% Example of FEM
-% MISES truss 
+% Example of cantilever beam
 % ----------------------------------------------------------------------
 
 clear all, close all, clc
 
 % Definitions
 
+% Problem name
+% ------------------------------
+problemName = 'Example5_beam_' ;
+
+
 % Solver path
 % ------------------------------
 
-%~ curr_path = pwd ;
-%~ solver_path = '../truss/' ;
+curr_path = pwd ;
+solver_path = '../../src/beams/' ;
 
 % Material parameters
 % ------------------------------
 
-sigmaY = 250 ; % Yield stress 
-K = 21e3 ; % Linear hardening 
-
-E = 210e3 ; % Elastic modulus 
-Et = E*K / ( E+K ) ; % Tangent modulus
+sigmaY = 250e3 ; 	% Yield stress 
+K = 0 ; 					% Linear hardening 
+E = 210e6 ; 			% Elastic modulus
 
 % Geometry variables
 % ------------------------------
 
-A1 = 200 ; 	% Element 1 section 
-A2 = A1 ; 	% Element 2 section 
+b = 0.1 ; % section width
+h = 0.1 ;	% section height
 
-secVec = [ A1 ; A2 ] ;
+secVec = [ b h ] ;
 
-l = 1000 ; % Length
-aux = sqrt(2) * l ;
-
-Nodes =  [ 0 		0 ; ...
-					 aux 	aux ; ...
-					 2*aux 0 ] ;
+L = 1 ; % Length
+nnodesMesh = 20 ;
+xcoords = linspace(0,L,nnodesMesh)' ;
+ycoords = zeros(length(xcoords),1) ;
+ 
+Nodes = [ xcoords ycoords ] ;
+%~ Nodes =  [ 0 0 ; ...
+					 %~ l 0 ] ;
 
 % Geometry variables
 % ------------------------------
 
 % Conec structure 
-% [ nod1 nod2 A ]
-Conec = [ 1 2 1 ; ...
-					2 3 2 ] ;
+% [ nod1 nod2 sec ]
+vec1 = (1:1:(length(xcoords)-1))' ;
+vec2 = (2:1:(length(xcoords)))' ;
+vec3 = ones(length(vec1),1) ;
+Conec = [ vec1 vec2 vec3 ] ;
 
 % External forces 
 % ------------------------------
 
 % Global coordinate system
-Fx = 0 ;
-Fy = 7.5e3 ;
+
+Fy = -1 ;
+Mz = 0 ;
 
 % nodalForceMatrix structure:
-% [ node Fx Fy ]
-nodalForceMatrix = [ 2 Fx Fy ] ; 
+% [ node Fy Mz ]
+nod = size(Nodes,1) ;
+nodalForceMatrix = [ nod Fy Mz ] ; 
 
 % Supports 
 % ------------------------------
@@ -63,68 +71,121 @@ nodalForceMatrix = [ 2 Fx Fy ] ;
 
 % suppMatrix structure:
 % [node kx ky ]
-suppMatrix = [ 1 inf 	inf ; ...
-							 3 inf 	inf	] ;
+suppMatrix = [ 1 	inf inf ] ;
 
 
 % Numerical method parameters
 % ------------------------------
 
-tolk = 3 	; % Number of iters
+tolk = 50 	; % Number of iters
 tolu = 1e-4 ; % Tolerance of converged disps
-tolf = 1e-6 ; % Tolerance of internal forces 
-nLoadSteps = 20 ; % Number of load increments
+tolf = 1e-6 ; % Tolerance of internal forces
+nLoadSteps = 60 ; % Number of load increments
  
-loadFactorsVec = [ones(nLoadSteps,1) ; -ones(2.5*nLoadSteps,1) ; ones(3.5*nLoadSteps,1)] ;
+fac = 1; 
+unloadSize = 3 ;
+loadFactorsVec = [ ones(nLoadSteps,1) ] ; 
+loadFactorsVec = [ ones(nLoadSteps,1) ; -fac*ones(unloadSize,1) ] ; 
+ 
+% Plot parameters
+% ------------------------------
+% Figure names
+nameUndeformed = [ problemName 'Undeformed' ] ;
+nameMk = [ problemName 'M-k' ] ;
+nameDeformed = [ problemName 'Deformed' ] ;
 
-epsPl0 	= 0 ;
-epsPla0 = 0 ;
-sigma0 = 0 ;
+% Deformed structure
+plotsVec = [ 59 ] ;
+
+
 
 % FEM
 % ------------------------------
 
-%~ cd (solver_path)
-
+cd (solver_path)
 
 solverFEM
 
+cd (curr_path) 
 
-%~ cd (curr_path) 
+
+
+% Plots
+% ------------------------------
+
+My = sigmaY * b*h^2/6 
+Mp = sigmaY * b*h^2/4 
+kappa_e = 2*sigmaY/(E*h) 
+
+elem 				= 1 ;
+plotLoadVec = [1:(nLoadSteps)] ;
+scaleFactor = 1 ;
+
+figure
+hold on, grid on
+
+lw = 2.0 ; ms = 11 ; plotFontSize = 22 ;
+%~ plot(abs(cell2mat(kappaHistElem(elem,plotLoadVec)))/kappa_e, abs(matFintL(2,(1:(nLoadSteps))))/My, 'b-o', 'linewidth', lw, 'markersize', ms)
+%~ plot(abs(cell2mat(kappaHistElem(elem,plotLoadVec)))/kappa_e, abs(matFintL(2,(1:(nLoadSteps))))/My, 'b-o', 'linewidth', lw, 'markersize', ms)
+
+
+plot(abs(cell2mat(kappaHistElem(elem,1:nLoadSteps))), abs(matFintL(2,(1:nLoadSteps))), 'b-o', 'linewidth', lw, 'markersize', ms)
+plot(abs(cell2mat(kappaHistElem(elem,nLoadSteps:(nLoadSteps+unloadSize)))), abs(matFintL(2,nLoadSteps:(nLoadSteps+unloadSize))), 'g-o', 'linewidth', lw, 'markersize', ms)
+
+labx = xlabel('Curvature'); laby = ylabel('M') ;
+tit = title('M-\kappa');
+set(labx, 'fontsize', plotFontSize*.5);
+set(laby, 'fontsize', plotFontSize*.5);
+set(tit, 'fontsize', plotFontSize);
 
 % Solution check
 % ------------------------------
-gdl = 2*2-1 ; 
-Ffem = abs(matFintL(:,2)(gdl))
-Fana = abs( Fy / (2*cos(deg2rad(45))) )
 
-err = ( Ffem - Fana ) / Fana * 100 
+P = abs(Fy) ;
+I = b*h^3/12 ;
 
-% plot
+node = size(Nodes,1) ;
+dof = node*2-1 ;
 
-controlDisps = matUk(gdl,:) ;
-loadFactors = loadFactorsVec ;
+ffem = matUk(dof,2) 
+theta_fem = matUk(dof+1,2)
+M1fem = matFint(2,2) 
 
-lw = 2.0 ; ms = 11 ; plotFontSize = 22 ;
-figure
-grid on
-plot( controlDisps, loadFactors, 'k-o' , 'linewidth', lw,'markersize',ms )
-labx = xlabel('Displacement');   laby = ylabel('$\lambda$') ;
-set(labx, 'fontsize', plotFontSize);
-set(laby, 'fontsize', plotFontSize);
-tit = title('disp-\lambda');
-set(tit, 'fontsize', plotFontSize);
+%~ My = sigmaY * b*h^2/6 
+%~ Mp = sigmaY * b*h^2/4 
+%~ kappa_e = 2*sigmaY/(E*h) 
+disp('------------------------------------')
 
-
-figure
-grid on, hold on
-plot(cell2mat(epsHistElem(1,1:nLoadSteps)), cell2mat(sigmaHistElem(1,1:nLoadSteps)), 'b-x', 'linewidth', lw, 'markersize', ms) 
-plot(cell2mat(epsHistElem(1,nLoadSteps:3.5*nLoadSteps)), cell2mat(sigmaHistElem(1,nLoadSteps:3.5*nLoadSteps)), 'g-o', 'linewidth', lw, 'markersize', ms)
-plot(cell2mat(epsHistElem(1,3.5*nLoadSteps:7*nLoadSteps)), cell2mat(sigmaHistElem(1,3.5*nLoadSteps:7*nLoadSteps)), 'b-x', 'linewidth', lw, 'markersize', ms)
+% Analytical solution
+disp('First step') 
+disp('------------------------------------')
+Mana = P*L 
+fana = P*L^3/(3*E*I)
+theta_ana = P*L^2/(2*E*I)
+disp('------------------------------------')
 
 
-labx = xlabel('Strain'); laby = ylabel('Stress') ;
-set(labx, 'fontsize', plotFontSize);
-set(laby, 'fontsize', plotFontSize);
-tit = title('\sigma-\epsilon');
-set(tit, 'fontsize', plotFontSize);
+
+kappaPlElem = cell2mat(kappaPlHistElem(1,:)) ;
+kappaPlaElem = cell2mat(kappaPlaHistElem(1,:)) ;
+kappaElem = cell2mat(kappaHistElem(1,:)) ;
+
+tb = 48 ; t1 = tb+1 ; t2 = t1+1 ;	
+
+[ phiHistElem(1,tb) phiHistElem(1,t1) phiHistElem(1,t2) ]
+
+vecKappa = [ kappaElem(tb) kappaElem(t1) kappaElem(t2) ]
+vecKappaPl = [ kappaPlElem(tb-1) kappaPlElem(t1-1) kappaPlElem(t2-1) ]
+vecKappaPla = [ kappaPlaElem(tb-1) kappaPlaElem(t1-1) kappaPlaElem(t2-1) ]
+
+vecMe = E*I*(vecKappa - vecKappaPl)
+vecPhi = abs(vecMe) - My
+vecC = abs( 3*sigmaY ./ (vecKappa*h) .* ( 1 - kappa_e^2./(3*vecKappa.^2) ) ) 
+
+%~ vecKappa = [ kappaElem(2) ]
+%~ vecKappaPl = [ kappaPlElem(1) ]
+%~ vecKappaPla = [ kappaPlaElem(1) ]
+
+%~ vecMe = E*I*(vecKappa - vecKappaPl)
+%~ vecPhi = abs(vecMe) - My
+

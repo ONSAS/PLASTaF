@@ -11,7 +11,6 @@ generalDefs
 
 while (nTimes > time)
 	
-	
 	Uk = matUk(:,time) ;
 	
 	% Assembly forces
@@ -26,7 +25,7 @@ while (nTimes > time)
 		Fextk(dofs) = Fextk(dofs) + lambdak * nodalForceMatrix(i,2:3)'  ;
 	end
 	
-	matFext = [ matFext Fextk ] ; 
+	matFext = [ matFext Fextk ] ;
 	
 	% Finds Uk
 	k = 0 ; % NR iter counter
@@ -42,6 +41,7 @@ while (nTimes > time)
 	
 	% Store variables
 	% ------------------------------
+	
 	matUk 	= [ matUk Uk ] ;
 	matFint = [ matFint Fintk ] ;
 	matFintL = [ matFintL FintkL ] ;

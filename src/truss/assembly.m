@@ -71,12 +71,13 @@ for i = 1:nelems
 	Uke = Uk(elemdofs) ;
 	
 	% Constitutive model
-	[Finte, epsk, Ck, epsPlk, epsPlak, sigmak] = trussInternLoad(Uke, Xe, R, l, A, modelParams, epsPlHistElem(i,:), epsPlaHistElem(i,:), time) ;
+	[Finte, epsk, Ck, epsPlk, epsPlak, sigmak, phik] = trussInternLoad(Uke, Xe, R, l, A, modelParams, epsPlHistElem(i,:), epsPlaHistElem(i,:), time) ;
 	
-	epsHistElem(i,time) = epsk ;
-	epsPlHistElem(i,time) = epsPlk ;
-	epsPlaHistElem(i,time) = epsPlak ;
-	sigmaHistElem(i,time) = sigmak ; 
+	epsHistElem(i,time+1) = epsk ;
+	epsPlHistElem(i,time+1) = epsPlk ;
+	epsPlaHistElem(i,time+1) = epsPlak ;
+	sigmaHistElem(i,time+1) = sigmak ; 
+	phiHistElem(i,time+1) = phik ;
 	
 	% Internal force
 	FintkL(elemdofs) = [ -Finte 0 Finte 0 ]' ;

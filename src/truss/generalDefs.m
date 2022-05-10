@@ -71,6 +71,9 @@ epsPlHistElem(:,1) = epsPl0 ;
 epsPlaHistElem(:,1) = epsPla0 ;
 sigmaHistElem(:,1) = sigma0 ;
 
+phiHistElem = cell(nelems,nTimes) ;
+phiHistElem(:,1) = 0 ;
+
 % KTred cell
 % ---------------------------------------
 

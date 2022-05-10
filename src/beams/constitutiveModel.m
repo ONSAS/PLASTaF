@@ -1,4 +1,4 @@
-function [C, alpha, kappaPlk, kappaPlak, Mk] = constitutiveModel(modelVec, b, h, kappa, kappaPlHist, kappaPlaHist, i)
+function [C, alpha, kappaPlk, kappaPlak, Mk, phi] = constitutiveModel(modelVec, b, h, kappa, kappaPlHist, kappaPlaHist, i)
 
 	% Model variables
 	E 			= modelVec(1) ; 
@@ -17,23 +17,26 @@ function [C, alpha, kappaPlk, kappaPlak, Mk] = constitutiveModel(modelVec, b, h,
 			kappaPlak = kappaPlaHist{i}	 ;
 			alpha = 1 ;
 			Mk = E*I*kappa ;
+			phi = abs(Mk)-My ;
 	else	
 		
-		Me = -E*I*( kappa - kappaPlHist{i-1} ) ;
+		Me = E*I*( kappa - kappaPlHist{i} ) ;
 		phi = abs(Me)-My ;
 
 		if phi <= 0
 			Mk = Me ;
 			C = E ;
-			kappaPlk = kappaPlHist{i-1} ;
-			kappaPlak = kappaPlaHist{i-1}	 ;
+			kappaPlk = kappaPlHist{i} ;
+			kappaPlak = kappaPlaHist{i}	 ;
 			alpha = 1 ;
 		else
 			deltaGamma = ( abs(Me) - My ) / (E*I) ;
-			Mk = Me - E * I * deltaGamma * sign(Me) ;
-			kappaPlk = kappaPlHist{i-1} + deltaGamma * sign(Me) ;
-			kappaPlak = kappaPlaHist{i-1} + deltaGamma ;
-			C = abs( 3*sigmaY / (kappa*h) * ( 1 - kappa_e^2/(3*kappa^2) ) ) ;
+			Mk = Me - E*I*deltaGamma * sign(Me) ;
+			
+			kappaPlk = -(kappaPlHist{i} + deltaGamma *sign(Me)) ;
+			kappaPlak = kappaPlaHist{i} + deltaGamma ;
+			C = abs( 3*sigmaY / (kappa*h) ) * ( 1 - kappa_e^2/(3*kappa^2) ) ;
+			%~ C = abs( 1/kappa * ( 1-1/(kappa^2) ) ) ;
 			alpha = kappa_e / kappa ;
 		end
 

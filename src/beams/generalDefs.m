@@ -65,6 +65,9 @@ kappaHistElem(:,1) = 0 ;
 kappaPlHistElem(:,1) = 0 ;
 kappaPlaHistElem(:,1) = 0 ;
 
+phiHistElem = cell(nelems,nTimes) ;
+phiHistElem(:,1) = 0 ;
+
 % KTred cell
 % ---------------------------------------
 
